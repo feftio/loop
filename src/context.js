@@ -1,22 +1,37 @@
+import Storage from '@/storage'
+
 class Context {
   constructor(config, options) {
-    this.config = config
-    this.options = options
+    this._config = config
+    this._options = options
+    this._storage = new Storage()
   }
 
-  config() {
-    return this.config
-  }
-
-  options() {
-    return this.options
+  iterations(methodName) {
+    if (typeof methodName === 'string' || methodName instanceof String)
+      return this._options.methods[methodName]
+    return this._options.iterations
   }
 
   stop() {
-    this.options.stop = True
+    this._options.stop = true
   }
 
-  async delay() {
+  log(message = '') {
+    console.dir(this.current().self.name + ': ' + message)
+  }
+
+  current() {
+    return this._options.current
+  }
+
+  storage() {
+    return this._storage
+  }
+
+  async delay(millisecond) {
     await new Promise((resolve) => setTimeout(resolve, millisecond))
   }
 }
+
+export default Context
