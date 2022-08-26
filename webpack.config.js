@@ -21,7 +21,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Loop',
-      template: path.resolve(__dirname, './dist/index.html'),
+      template: path.resolve(__dirname, './static/index.html'),
     })
   ],
   output: {

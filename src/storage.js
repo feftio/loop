@@ -4,16 +4,20 @@ class Storage {
   }
 
   get(key) {
-    if (!this.is(key)) return this.object[key]
+    if (this.is(key)) return this.object[key]
   }
 
   set(key, value) {
-    if (!this.is(key)) this.object[key] = value
+    this.object[key] = value
     return this
   }
 
   is(key) {
-    return Object.values(this.object).indexOf(key) > -1
+    return (
+      !this.isNull(key) ||
+      !this.isUndefined(key) ||
+      Object.keys(this.object).indexOf(key) > -1
+    )
   }
 
   isNaN(key) {

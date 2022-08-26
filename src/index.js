@@ -1,8 +1,9 @@
 import Context from '@/context'
+import { renderMethods, httpMethods } from './methods'
 
 const defaultConfig = {
   delay: 1000,
-  delayBetweenMethods: 1000,
+  // delayBetweenMethods: 1000,
   methods: {},
 }
 
@@ -46,7 +47,7 @@ class Loop {
         this.options.current.iterations++
         this.options.current = null
         if (this.options.stop) break
-        await this.context.delay(this.config.delayBetweenMethods)
+        // await this.context.delay(this.config.delayBetweenMethods)
       }
       this.options.iterations++
     }
@@ -66,7 +67,7 @@ async function main() {
   const audio = { start: () => console.log('audio played') }
 
   const loop = new Loop({
-    delay: 1000,
+    delay: 4000,
     methods: {
       init: function (context) {
         context.current().callable = false
@@ -75,15 +76,8 @@ async function main() {
         })
       },
       checkClose: function (context) {},
-      send: function (context) {
-        
-        // context.data = String(Math.random())
-        console.log(`Get random number from server: ${context.data}`)
-      },
-      changeUI: function (context) {
-        const storage = context.storage()
-        storage.get('data')
-      },
+      ...httpMethods,
+      ...renderMethods,
     },
   })
   await loop.start()
