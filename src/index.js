@@ -1,9 +1,8 @@
 import Context from '@/context'
-import { renderMethods, httpMethods } from './methods'
+import { renderMethods, httpMethods, initMethods } from './methods'
 
 const defaultConfig = {
   delay: 1000,
-  // delayBetweenMethods: 1000,
   methods: {},
 }
 
@@ -20,6 +19,7 @@ const prepareOptions = (config) => {
       iterations: 0,
       callable: true,
       async: config.methods[methodName].constructor.name === 'AsyncFunction',
+      result: null,
     }
   }
   return options
@@ -42,12 +42,16 @@ class Loop {
         this.options.current = this.options.methods[methodName]
         if (!this.options.methods[methodName].callable) continue
         if (this.options.methods[methodName].async)
-          await this.config.methods[methodName](this.context)
-        else this.config.methods[methodName](this.context)
+          this.options.methods[methodName].result = await this.config.methods[
+            methodName
+          ](this.context)
+        else
+          this.options.methods[methodName].result = this.config.methods[
+            methodName
+          ](this.context)
         this.options.current.iterations++
         this.options.current = null
         if (this.options.stop) break
-        // await this.context.delay(this.config.delayBetweenMethods)
       }
       this.options.iterations++
     }
@@ -67,17 +71,11 @@ async function main() {
   const audio = { start: () => console.log('audio played') }
 
   const loop = new Loop({
-    delay: 4000,
+    delay: 2000,
     methods: {
-      init: function (context) {
-        context.current().callable = false
-        stopButton.addEventListener('click', () => {
-          context.stop()
-        })
-      },
-      checkClose: function (context) {},
       ...httpMethods,
       ...renderMethods,
+      ...initMethods
     },
   })
   await loop.start()
