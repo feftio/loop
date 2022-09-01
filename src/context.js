@@ -1,31 +1,30 @@
 class Context {
-  constructor(config, options) {
-    this._config = config
-    this._options = options
+  constructor(options) {
+    this.options = options
   }
 
   iterations(methodName) {
     if (typeof methodName === 'string' || methodName instanceof String)
-      return this._options.methods[methodName]
-    return this._options.iterations
+      return this.options.methods[methodName].iterations
+    return this.options.iterations
   }
 
   methods() {
-    return this._config.methods
+    return this.options.methods
   }
 
   result(methodName) {
-    if (!(methodName in this._options.methods))
+    if (!(methodName in this.options.methods))
       throw new Error(`No methods with name "${methodName}"`)
-    return this._options.methods[methodName].result
+    return this.options.methods[methodName].result
   }
 
   stop(methodName) {
-    if (methodName === undefined) return (this._options.stop = true)
-    if (!(methodName in this._options.methods) && methodName !== undefined)
+    if (methodName === undefined) return (this.options.stop = true)
+    if (!(methodName in this.options.methods) && methodName !== undefined)
       throw new Error(`No methods with name "${methodName}"`)
-    if (methodName in this._options.methods)
-      return (this._options.methods[methodName].callable = false)
+    if (methodName in this.options.methods)
+      return (this.options.methods[methodName].callable = false)
   }
 
   log(message = '') {
@@ -33,11 +32,11 @@ class Context {
   }
 
   current() {
-    return this._options.current
+    return this.options.current
   }
 
   store() {
-    return this._options.store
+    return this.options.store
   }
 
   async delay(millisecond) {

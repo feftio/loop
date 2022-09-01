@@ -1,20 +1,34 @@
-export const initMethods = {
-  initVideoStreaming: function (context) {
-    context.store().count++
-    context.log('count inc...')
+export const mainSteps = [
+  {
+    name: 'forward',
+    body: async (context) => {
+      await context.delay(5000)
+      return Math.random()
+    },
   },
-  delay: async function (context) {
-    await context.delay(5000)
+  {
+    name: 'left',
+    body: async (context) => {
+      console.dir(context.methods())
+    },
   },
-}
+  {
+    name: 'right',
+    body: (context) => {},
+  },
+]
 
-export const renderMethods = {
-  changeUI: function (context) {},
-}
-
-export const httpMethods = {
-  send: function (context) {
-    console.dir(context.current())
-    return String(Math.random())
+export const deferredSteps = [
+  {
+    name: 'far',
+    body: (context) => {
+      // console.dir(context)
+    },
   },
-}
+  {
+    name: 'close',
+    body: (context) => {
+      // console.dir(con o9p text)
+    },
+  },
+]
