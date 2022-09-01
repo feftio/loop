@@ -1,10 +1,7 @@
-import Store from '@/store'
-
 class Context {
   constructor(config, options) {
     this._config = config
     this._options = options
-    this._store = new Store()
   }
 
   iterations(methodName) {
@@ -18,11 +15,17 @@ class Context {
   }
 
   result(methodName) {
+    if (!(methodName in this._options.methods))
+      throw new Error(`No methods with name "${methodName}"`)
     return this._options.methods[methodName].result
   }
 
-  stop() {
-    this._options.stop = true
+  stop(methodName) {
+    if (methodName === undefined) return (this._options.stop = true)
+    if (!(methodName in this._options.methods) && methodName !== undefined)
+      throw new Error(`No methods with name "${methodName}"`)
+    if (methodName in this._options.methods)
+      return (this._options.methods[methodName].callable = false)
   }
 
   log(message = '') {
@@ -33,12 +36,8 @@ class Context {
     return this._options.current
   }
 
-  store(key, value, defaultValue) {
-    if (key !== undefined && value === undefined)
-      return this._store.get(key, defaultValue)
-    if (key !== undefined && value !== undefined)
-      return this._store.set(key, value)
-    return this._store
+  store() {
+    return this._options.store
   }
 
   async delay(millisecond) {

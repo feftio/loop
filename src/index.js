@@ -4,6 +4,7 @@ import { renderMethods, httpMethods, initMethods } from './methods'
 const defaultConfig = {
   delay: 1000,
   methods: {},
+  store: {},
 }
 
 const prepareOptions = (config) => {
@@ -12,6 +13,10 @@ const prepareOptions = (config) => {
     stop: false,
     iterations: 0,
     methods: {},
+    store: new Proxy(config.store, {
+      get: (object, property) => object[property],
+      set: (object, property, value, proxy) => (object[property] = value),
+    }),
   }
   for (const methodName in config.methods) {
     options.methods[methodName] = {
@@ -73,9 +78,12 @@ async function main() {
   const loop = new Loop({
     delay: 2000,
     methods: {
+      ...initMethods,
       ...httpMethods,
       ...renderMethods,
-      ...initMethods
+    },
+    store: {
+      count: 0,
     },
   })
   await loop.start()

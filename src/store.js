@@ -1,6 +1,6 @@
 class Store {
-  constructor() {
-    this.object = {}
+  constructor(object, handler) {
+    this.object = new Proxy(object, handler)
   }
 
   get(key, defaultValue) {
