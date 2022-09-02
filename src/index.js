@@ -7,6 +7,11 @@ const defaultConfig = {
   store: {},
 }
 
+// new Proxy(method.store || {}, {
+//   get: (object, property, proxy) => object[property],
+//   set: (object, property, value, proxy) => (object[property] = value),
+// }),
+
 const prepareOptions = (config) => {
   const options = {
     delay: config.delay,
@@ -14,13 +19,11 @@ const prepareOptions = (config) => {
     stop: false,
     iterations: 0,
     methods: {},
-    store: new Proxy(config.store, {
-      get: (object, property, proxy) => object[property],
-      set: (object, property, value, proxy) => (object[property] = value),
-    }),
+    store: config.store || {},
   }
   config.methods.forEach((method) => {
     options.methods[method.name] = {
+      name: method.name,
       body: typeof method.body === 'function' ? method.body : () => {},
       iterations: 0,
       callable: true,
@@ -29,6 +32,7 @@ const prepareOptions = (config) => {
       delay: typeof method.delay === 'number' ? method.delay : 0,
       condition:
         typeof method.condition === 'function' ? method.condition : () => true,
+      store: method.store || {},
     }
   })
   return options
@@ -72,17 +76,12 @@ class Loop {
 export default Loop
 
 async function main() {
-  const content = document.getElementById('content')
-  const changeContentButton = document.getElementById('changeContentButton')
-  const stopButton = document.getElementById('stopButton')
-  const video = { start: () => console.log('video played') }
-  const audio = { start: () => console.log('audio played') }
-
   const loop = new Loop({
-    delay: 2000,
+    delay: 0,
     methods: [...mainSteps, ...deferredSteps],
     store: {
-      count: 0,
+      stepCalled: false,
+      currentStep: 'forward',
     },
   })
   await loop.start()

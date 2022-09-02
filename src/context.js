@@ -35,8 +35,9 @@ class Context {
     return this.options.current
   }
 
-  store() {
-    return this.options.store
+  store(methodName) {
+    if (methodName === undefined) return this.options.store
+    return this.options.methods[methodName].store // NEED EXCEPTION
   }
 
   async delay(millisecond) {
